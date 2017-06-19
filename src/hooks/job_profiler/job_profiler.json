@@ -1,0 +1,8 @@
+﻿{
+    "metrics": [
+        {
+            "name": "metric.foo",
+            "command": "grep foo /proc/pid/%(pid)s/metric"
+        }
+    ]
+}
