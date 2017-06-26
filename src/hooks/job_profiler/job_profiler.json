@@ -3,6 +3,46 @@
         {
             "name": "metric.foo",
             "command": "grep foo /proc/pid/%(pid)s/metric"
+        },
+        {
+            "name": "net",
+            "command": "net_dev_parse.pl"
+        },
+        {
+            "name": "cpu",
+            "command": "proc_stat_parse.pl"
+        },
+        {
+            "name": "IOstat",
+            "command": "awk 'function name(file){sub("/sys/block/","",file);sub("/stat","",file);return file }{  ;print "IOstat."name(FILENAME)".reads="$1"\nIOstat."name(FILENAME)".rsize="$3"\nIOstat."name(FILENAME)".writes="$5"\nIOstat."name(FILENAME)".wsize="$7"\nIOstat."name(FILENAME)".in_flight="$9}' /sys/block/sd*/stat"
+        },
+        {
+            "name": "meminfo",
+            "command": "awk '/MemFree|MemAvailable|Buffers|Cached|SwapFree/ {sub(\":","=");print "meminfo."$1$2 }' /proc/meminfo"
         }
+        {
+            "name": "IB",
+            "command": "awk ' function basename(file) { sub (".*/","",file ); return file } function port(file) { sub(".*/ports/","",file ); sub("/.*","",file ); return file }{ if ($1 != 0 ){ print "IB.port"port(FILENAME)"."basename(FILENAME)"="$1}}' /sys/class/infiniband/mlx4_0/ports/*/counters/*"
+        },
+        {
+            "name": "loadavg",
+            "command": "awk '{print "loadavg.1min="$1"\nloadavg.5min="$2"\nloadavg.15min="$3}' /proc/loadavg"
+        },
+        {
+            "name": "cgroup.memory.max_usage",
+            "command": "awk 'function id(file){sub(".*/pbspro/","",file);sub("/.*","",file);return file} {print "cgroup.memory."id(FILENAME)"max_usage_in_bytes="$1}' /cgroup/memory/pbspro/*/memory.max_usage_in_bytes"
+        },
+        {
+            "name": "cgroup.memory.usage",
+            "command": "awk 'function id(file){sub(".*/pbspro/","",file);sub("/.*","",file);return file} {print "cgroup.memory."id(FILENAME)"usage_in_bytes="$1}' /cgroup/memory/pbspro/*/memory.usage_in_bytes"
+        },
+        {
+            "name": "cgroup.cpuacct.usage",
+            "command": "awk 'function id(file){sub(".*/pbspro/","",file);sub("/.*","",file);return file} {print "cgroup.cpuacct."id(FILENAME)"usage="$1}' /cgroup/cpuacct/pbspro/*/cpuacct.usage"
+        },
+        {
+            "name": "cgroup.tasks",
+            "command": "awk 'function id(file){sub(".*/pbspro/","",file);sub("/.*","",file);return file} {s+=1} END { print "cgroup."id(FILENAME)"tasks="s}' /cgroup/memory/pbspro/*/tasks"
+        },
     ]
 }
