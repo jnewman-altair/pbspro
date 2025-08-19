@@ -222,7 +222,7 @@ if __name__ == '__main__':
     else:
         config = '/etc/pbs.conf'
 
-    opts, args = getopt.getopt(sys.argv[1:], "t:i:I:c:w:l:s:hf",
+    opts, args = getopt.getopt(sys.argv[1:], "tiI:cwlshf",
                                ["log-conf=", "version"])
 
     for o, val in opts:
